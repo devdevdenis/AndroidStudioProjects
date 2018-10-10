@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">BurgerRing</string>
+    <string name="firstName">Фамилия:</string>
+    <string name="name">Имя:</string>
+    <string name="group">Группа:</string>
+    <string name="myFirstName">Вольпер</string>
+    <string name="myName">Денис</string>
+    <string name="myGroupName">15 - ПРИ</string>
+    <string name="phone">Телефон:</string>
+    <string name="myPhone">+79532758888</string>
+    <string name="email">Email:</string>
+    <string name="myEmail">denisvolper@gmail.com</string>
+    <string name="ringStudent">Набрать студента</string>
+</resources>
