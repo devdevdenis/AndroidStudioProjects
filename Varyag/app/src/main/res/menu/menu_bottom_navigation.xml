@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/action_events"
+        android:icon="@drawable/ic_bottom_nav_events"
+        android:title="@string/Events" />
+    <item
+        android:id="@+id/action_gallery"
+        android:icon="@drawable/ic_bottom_nav_gallery"
+        android:title="@string/Gallery" />
+    <item
+        android:id="@+id/action_objects"
+        android:icon="@drawable/ic_bottom_nav_objects"
+        android:title="@string/Objects" />
+    <item
+        android:id="@+id/action_account"
+        android:icon="@drawable/ic_bottom_nav_account"
+        android:title="@string/Cabinet" />
+</menu>
