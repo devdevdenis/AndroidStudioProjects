@@ -32,4 +32,9 @@
         <!--<item name="cardBackgroundColor">@color/gray</item>-->
     </style>
 
+    <style name="EventLabel">
+        <item name="android:textColor">@color/blue</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
 </resources>

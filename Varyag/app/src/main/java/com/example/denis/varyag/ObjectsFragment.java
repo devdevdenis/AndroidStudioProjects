@@ -7,8 +7,17 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
+import android.widget.Toast;
+
+import com.synnapps.carouselview.ImageClickListener;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 
 /**
@@ -67,18 +76,42 @@ public class ObjectsFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_objects, container, false);
-        // определяем массив типа String
-        final String[] catNames = new String[] {
-                "Рыжик", "Барсик", "Мурзик", "Мурка", "Васька",
-                "Томасина", "Кристина", "Пушок", "Дымка", "Кузя",
-                "Китти", "Масяня", "Симба"
+
+        // Array of strings for ListView Title
+        String[] listviewTitle = new String[]{
+                "Каток", "Горнолыжный склон", "Спа-центр", "Фитнес-центр",
+                "Бани"
         };
 
-        // получаем экземпляр элемента ListView
-        ListView listView = (ListView) view.findViewById(R.id.listView);
 
-        ArrayAdapter<String> listViewAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_expandable_list_item_1, catNames);
-        listView.setAdapter(listViewAdapter);
+        int[] listviewImage = new int[]{
+                R.drawable.katok, R.drawable.sklon, R.drawable.spa_center, R.drawable.fitnes_center,
+                R.drawable.bany
+        };
+
+        List<HashMap<String, String>> aList = new ArrayList<HashMap<String, String>>();
+        for (int i = 0; i < 5; i++) {
+            HashMap<String, String> hm = new HashMap<String, String>();
+            hm.put("listview_title", listviewTitle[i]);
+            hm.put("listview_image", Integer.toString(listviewImage[i]));
+            aList.add(hm);
+        }
+
+        String[] from = {"listview_image", "listview_title"};
+        int[] to = {R.id.listview_image, R.id.listview_title};
+
+        SimpleAdapter simpleAdapter = new SimpleAdapter(getActivity(), aList, R.layout.listview_activity, from, to);
+        ListView androidListView = (ListView) view.findViewById(R.id.listView);
+        androidListView.setAdapter(simpleAdapter);
+
+        androidListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+                Toast.makeText(getActivity(), "Clicked item: "+ position + " Parent: " + parent + " View: " + view + " id: " + id, Toast.LENGTH_LONG).show();
+            }
+        });
+
         return view;
     }
 
