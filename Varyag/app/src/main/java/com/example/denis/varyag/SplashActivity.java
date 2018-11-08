@@ -3,6 +3,7 @@ package com.example.denis.varyag;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.ProgressBar;
 
 public class SplashActivity extends Activity {
 

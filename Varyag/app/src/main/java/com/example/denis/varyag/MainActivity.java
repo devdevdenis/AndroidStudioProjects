@@ -80,31 +80,28 @@ public class MainActivity extends AppCompatActivity
                                 fragmentManager.beginTransaction()
                                         .show(NEWS_FRAGMENT)
                                         .commit();
+                                setTitle("События");
                                 break;
                             case R.id.action_gallery:
                                 hideFragments();
                                 fragmentManager.beginTransaction()
                                         .show(GALLERY_FRAGMENT)
                                         .commit();
+                                setTitle("Галлерея");
                                 break;
                             case R.id.action_objects:
                                 hideFragments();
                                 fragmentManager.beginTransaction()
                                         .show(OBJECTS_FRAGMENT)
                                         .commit();
+                                setTitle("Объекты");
                                 break;
                             case R.id.action_account:
                                 hideFragments();
                                 fragmentManager.beginTransaction()
                                         .show(ACCOUNT_FRAGMENT)
                                         .commit();
-//                                imgMap.setVisibility(View.GONE);
-//                                imgDial.setVisibility(View.GONE);
-//                                imgMail.setVisibility(View.VISIBLE);
-
-//                                Intent intent = new Intent(MainActivity.this, SecondActivity.class);
-//                                startActivity(intent);
-//                                finish();
+                                setTitle("Аккаунт");
                                 break;
                             default: return false;
                         }

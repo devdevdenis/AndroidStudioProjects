@@ -2,14 +2,26 @@ package com.example.denis.varyag;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 
 
@@ -22,15 +34,8 @@ import java.util.ArrayList;
  * create an instance of this fragment.
  */
 public class GalleryFragment extends Fragment {
-    View view;
-    private final String recyclerViewTitleText[] = {"Android", "RecyclerView", "Android List", "GridView", "ListView", "Tutorial", "Example", "CardView", "Lollipop", "Marshmallow", "Custom ListView", "Custom GridView"
-    };
+    public static String LOG_TAG = "my_log";
 
-    private final int recyclerViewImages[] = {
-            R.drawable.example_photo_folder, R.drawable.example_photo_folder, R.drawable.example_photo_folder, R.drawable.example_photo_folder, R.drawable.example_photo_folder, R.drawable.example_photo_folder,
-            R.drawable.example_photo_folder, R.drawable.example_photo_folder, R.drawable.example_photo_folder, R.drawable.example_photo_folder, R.drawable.example_photo_folder, R.drawable.example_photo_folder
-
-    };
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -67,19 +72,96 @@ public class GalleryFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
 
+    private static class ParseTask extends AsyncTask<Void, Void, String> {
+
+        HttpURLConnection urlConnection = null;
+        BufferedReader reader = null;
+        String resultJson = "";
+
+        @Override
+        protected String doInBackground(Void... params) {
+            // получаем данные с внешнего ресурса
+            try {
+                URL url = new URL("http://androiddocs.ru/api/friends.json");
+
+                urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestMethod("GET");
+                urlConnection.connect();
+
+                InputStream inputStream = urlConnection.getInputStream();
+                StringBuffer buffer = new StringBuffer();
+
+                reader = new BufferedReader(new InputStreamReader(inputStream));
+
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    buffer.append(line);
+                }
+
+                resultJson = buffer.toString();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return resultJson;
+        }
+
+        @Override
+        protected void onPostExecute(String strJson) {
+            super.onPostExecute(strJson);
+            // выводим целиком полученную json-строку
+            Log.d(LOG_TAG, strJson);
+
+            JSONObject dataJsonObj = null;
+
+            try {
+                dataJsonObj = new JSONObject(strJson);
+                JSONArray friends = dataJsonObj.getJSONArray("friends");
+
+                // Перебираем и выводим контакты каждого друга
+                for (int i = 0; i < friends.length(); i++) {
+                    JSONObject friend = friends.getJSONObject(i);
+
+                    JSONObject contacts = friend.getJSONObject("contacts");
+
+                    String phone = contacts.getString("mobile");
+                    String email = contacts.getString("email");
+                    String skype = contacts.getString("skype");
+
+                    Log.d(LOG_TAG, "phone: " + phone);
+                    Log.d(LOG_TAG, "email: " + email);
+                    Log.d(LOG_TAG, "skype: " + skype);
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_gallery, container, false);
-        initRecyclerViews();
+
+        View view = inflater.inflate(R.layout.fragment_gallery, container, false);
+
+        Button getJSONBtn = view.findViewById(R.id.getJSONDataBtn);
+        getJSONBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new ParseTask().execute();
+            }
+        });
+
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_gallery, container, false);
+        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -119,28 +201,5 @@ public class GalleryFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
-    }
-
-    private void initRecyclerViews() {
-        RecyclerView mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
-        mRecyclerView.setHasFixedSize(true);
-        RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getActivity(), 2);
-        mRecyclerView.setLayoutManager(mLayoutManager);
-
-        ArrayList<AndroidVersion> av = prepareData();
-        AndroidDataAdapter mAdapter = new AndroidDataAdapter(getActivity(), av);
-        mRecyclerView.setAdapter(mAdapter);
-    }
-
-    private ArrayList<AndroidVersion> prepareData() {
-
-        ArrayList<AndroidVersion> av = new ArrayList<>();
-        for (int i = 0; i < recyclerViewTitleText.length; i++) {
-            AndroidVersion mAndroidVersion = new AndroidVersion();
-            mAndroidVersion.setAndroidVersionName(recyclerViewTitleText[i]);
-            mAndroidVersion.setrecyclerViewImage(recyclerViewImages[i]);
-            av.add(mAndroidVersion);
-        }
-        return av;
     }
 }
