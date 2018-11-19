@@ -1,6 +1,7 @@
 package com.example.denis.varyag;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -109,7 +110,10 @@ public class ObjectsFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-                Toast.makeText(getActivity(), "Clicked item: "+ position + " Parent: " + parent + " View: " + view + " id: " + id, Toast.LENGTH_LONG).show();
+//                Toast.makeText(getActivity(), "Clicked item: "+ position + " Parent: " + parent + " View: " + view + " id: " + id, Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(getActivity(), ObjectActivity.class);
+                intent.putExtra("test_val", id);
+                startActivity(intent);
             }
         });
 
