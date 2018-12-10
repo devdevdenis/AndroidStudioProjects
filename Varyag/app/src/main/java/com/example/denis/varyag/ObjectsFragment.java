@@ -87,8 +87,8 @@ public class ObjectsFragment extends Fragment {
 
 
         int[] listviewImage = new int[]{
-                R.drawable.katok, R.drawable.sklon, R.drawable.spa_center, R.drawable.fitnes_center,
-                R.drawable.bany
+                R.drawable.obj_bany, R.drawable.obj_sklon, R.drawable.obj_spa_center, R.drawable.obj_fitnes_center,
+                R.drawable.obj_bany
         };
 
         List<HashMap<String, String>> aList = new ArrayList<HashMap<String, String>>();

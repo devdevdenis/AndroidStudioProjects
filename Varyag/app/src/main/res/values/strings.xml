@@ -22,4 +22,27 @@
     <string name="account_fragment_label">Аккаунт</string>
     <string name="objects_fragment_label">Объекты</string>
     <string name="sample_text">Sample change this</string>
+    <string name="hockey_trainings">Вечерние тренировки в хоккейной школе Варяга</string>
+    <string name="hockey_trainings_define">Мы снова набираем вечернюю группу по тренировкам хоккею! Лучшие тренера Европы, 2 часа интенсивной работы, индивидуальный подход к каждому ученику. Принимаем желающих всех возрастов!</string>
+    <string name="more">Подробнее..</string>
+    <string name="news_sklon_define">Друзья, завтра долгожданный для всех день! Открываем сезон на горнолыжных склонах и склонах для тюбинга! Горнолыжные работают 01.12 и 02.12 работают с 12.00 до 22.00. Каток завтра с 14.00 до 22.00. Ежедневный режим работы, цены и подробности по ссылке ..</string>
+    <string name="news_sklon_open">Открытие горнолыжных склонов!</string>
+    <string name="news_tubing_open">Мы наконец-то засыпали горку для тюбинга!</string>
+    <string name="news_tubing_define">В эти выходные мы рады приветствовать на нашей горке для тюбинга! Подарите своему ребенку незабываемые выходные на горках Варяга! Ждем всех с 10 до 22.00 каждый день..</string>
+    <string name="news_hockey_cont_descr">Набор в вечернюю группу по хоккею</string>
+    <string name="news_sklon_cont_descr">Открытие горнолыжного склона</string>
+    <string name="news_tubing_cont_descr">Открытие горки для тюбинга</string>
+    <string name="profile_photo">Фото профиля</string>
+    <string name="change_photo">Изменить фото..</string>
+    <string name="my_card">Моя карта</string>
+    <string name="balance">Баланс:</string>
+    <string name="card_identificator">Идентификатор карты:</string>
+    <string name="bonus_points">Бонусные баллы:</string>
+    <string name="reg_date">Зарегистрирована:</string>
+    <string name="add_money">Пополнить баланс</string>
+    <string name="about_me">Обо мне</string>
+    <string name="birth_date">Дата рождения:</string>
+    <string name="third_name">Отчество:</string>
+    <string name="second_name">Имя:</string>
+    <string name="first_name">Фамилия:</string>
 </resources>

@@ -152,14 +152,6 @@ public class GalleryFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_gallery, container, false);
 
-        Button getJSONBtn = view.findViewById(R.id.getJSONDataBtn);
-        getJSONBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new ParseTask().execute();
-            }
-        });
-
         // Inflate the layout for this fragment
         return view;
     }

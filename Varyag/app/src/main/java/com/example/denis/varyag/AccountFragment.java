@@ -1,12 +1,26 @@
 package com.example.denis.varyag;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
 
 
 /**
@@ -63,8 +77,21 @@ public class AccountFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        final View view = inflater.inflate(R.layout.fragment_account, container, false);
+
+        Button addMoneyBtn = (Button) view.findViewById(R.id.addMoney);
+        addMoneyBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TextView balanceTV = view.findViewById(R.id.balanceMoney);
+                double balance = Double.parseDouble(balanceTV.getText().toString());
+                double new_balance = balance + 50;
+                balanceTV.setText(Double.toString(new_balance));
+            }
+        });
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_account, container, false);
+        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -106,3 +133,5 @@ public class AccountFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 }
+
+
