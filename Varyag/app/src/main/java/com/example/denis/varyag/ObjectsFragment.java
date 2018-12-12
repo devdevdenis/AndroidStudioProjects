@@ -85,9 +85,8 @@ public class ObjectsFragment extends Fragment {
                 "Бани"
         };
 
-
         int[] listviewImage = new int[]{
-                R.drawable.obj_bany, R.drawable.obj_sklon, R.drawable.obj_spa_center, R.drawable.obj_fitnes_center,
+                R.drawable.obj_katok, R.drawable.obj_sklon, R.drawable.obj_spa_center, R.drawable.obj_fitnes_center,
                 R.drawable.obj_bany
         };
 
@@ -110,9 +109,40 @@ public class ObjectsFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-//                Toast.makeText(getActivity(), "Clicked item: "+ position + " Parent: " + parent + " View: " + view + " id: " + id, Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), "Clicked item: "+ position + " Parent: " + parent + " View: " + view + " id: " + id, Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(getActivity(), ObjectActivity.class);
-                intent.putExtra("test_val", id);
+
+                int [] imges = new int[]{};
+                switch (position)
+                {
+                    case 0:
+                    {
+                        imges = new int[]{R.drawable.katok1, R.drawable.katok2, R.drawable.katok3, R.drawable.katok4};
+                        break;
+                    }
+                    case 1:
+                    {
+                        imges = new int[]{R.drawable.sklon1, R.drawable.sklon2, R.drawable.sklon3, R.drawable.sklon4, R.drawable.sklon5};
+                        break;
+                    }
+                    case 2:
+                    {
+                        imges = new int[]{R.drawable.spa1, R.drawable.spa2, R.drawable.spa3, R.drawable.spa4, R.drawable.spa5};
+                        break;
+                    }
+                    case 3:
+                    {
+                        imges = new int[]{R.drawable.fitnes1, R.drawable.fitnes2, R.drawable.fitnes3, R.drawable.fitnes4};
+                        break;
+                    }
+                    case 4:
+                    {
+                        imges = new int[]{R.drawable.banya1, R.drawable.banya2, R.drawable.banya3, R.drawable.banya4};
+                        break;
+                    }
+                }
+
+                intent.putExtra("img_array", imges);
                 startActivity(intent);
             }
         });

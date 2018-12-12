@@ -11,19 +11,24 @@ import com.synnapps.carouselview.CarouselView;
 import com.synnapps.carouselview.ImageClickListener;
 import com.synnapps.carouselview.ImageListener;
 
+import java.io.Console;
+
 public class ObjectActivity extends AppCompatActivity {
 
     CarouselView carouselView;
-
-    int[] sampleImages = {R.drawable.image_1, R.drawable.image_2, R.drawable.image_3, R.drawable.image_4, R.drawable.image_5};
+    int[] sampleImages;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_object);
 
-        Long t = getIntent().getExtras().getLong("test_val");
-        Toast.makeText(ObjectActivity.this, "test_val: " + t, Toast.LENGTH_SHORT).show();
+        Bundle arguments = getIntent().getExtras();
+        Toast.makeText(ObjectActivity.this, arguments.toString(), Toast.LENGTH_SHORT).show();
+        sampleImages = arguments.getIntArray("img_array");
+
+//        Long t = getIntent().getExtras().getLong("test_val");
+//        Toast.makeText(ObjectActivity.this, arguments.toString(), Toast.LENGTH_SHORT).show();
 
         carouselView = (CarouselView) findViewById(R.id.carouselView);
         carouselView.setPageCount(sampleImages.length);

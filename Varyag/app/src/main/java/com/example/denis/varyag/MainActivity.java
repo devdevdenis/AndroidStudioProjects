@@ -1,16 +1,12 @@
 package com.example.denis.varyag;
 
-import android.app.FragmentManager;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.view.View;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -18,19 +14,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, NewsFragment.OnFragmentInteractionListener, GalleryFragment.OnFragmentInteractionListener, ObjectsFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener, NewsFragment.OnFragmentInteractionListener, ObjectsFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractionListener {
 
     BottomNavigationView bottomNavigationView;
-    android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
+    android.support.v4.app.FragmentManager fragmentManager;
 
-    Fragment NEWS_FRAGMENT;
-    Fragment GALLERY_FRAGMENT;
-    Fragment OBJECTS_FRAGMENT;
-    Fragment ACCOUNT_FRAGMENT;
+    GalleryFragment galleryFragment;
+    NewsFragment newsFragment;
+    ObjectsFragment objectsFragment;
+    AccountFragment accountFragment;
 
     @Override
     public void onFragmentInteraction(Uri uri) {
@@ -41,19 +35,6 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        //        Fragments
-        NEWS_FRAGMENT = fragmentManager.findFragmentById(R.id.news_fragment);
-        GALLERY_FRAGMENT = fragmentManager.findFragmentById(R.id.gallery_fragment);
-        OBJECTS_FRAGMENT = fragmentManager.findFragmentById(R.id.objects_fragment);
-        ACCOUNT_FRAGMENT = fragmentManager.findFragmentById(R.id.account_fragment);
-
-        fragmentManager.beginTransaction()
-                .hide(GALLERY_FRAGMENT)
-                .hide(OBJECTS_FRAGMENT)
-                .hide(ACCOUNT_FRAGMENT)
-                .show(NEWS_FRAGMENT)
-                .commit();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -75,42 +56,84 @@ public class MainActivity extends AppCompatActivity
                     @Override
                     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
+                        Fragment fragment;
                         switch (item.getItemId()) {
                             case R.id.action_events:
-                                hideFragments();
-                                fragmentManager.beginTransaction()
-                                        .show(NEWS_FRAGMENT)
-                                        .commit();
-                                setTitle("События");
+                                fragment = (NewsFragment) fragmentManager.findFragmentById(R.id.news_fragment);
+
+                                if (fragment == null)
+                                {
+                                    FragmentTransaction fragmentTransaction = fragmentManager
+                                            .beginTransaction();
+                                    fragmentTransaction.replace(R.id.fragments_container, newsFragment);
+                                    fragmentTransaction.commit();
+
+//                                    fragmentManager.findFragmentById(R.id.gallery_fragment);
+//                                    fragmentManager.findFragmentById(R.id.objects_fragment);
+//                                    fragmentManager.findFragmentById(R.id.account_fragment);
+                                    setTitle("События");
+                                }
                                 break;
                             case R.id.action_gallery:
-                                hideFragments();
-                                fragmentManager.beginTransaction()
-                                        .show(GALLERY_FRAGMENT)
-                                        .commit();
-                                setTitle("Галлерея");
+                                fragment = (GalleryFragment) fragmentManager.findFragmentById(R.id.gallery_fragment);
+
+                                if (fragment == null)
+                                {
+                                    FragmentTransaction fragmentTransaction = fragmentManager
+                                            .beginTransaction();
+                                    fragmentTransaction.replace(R.id.fragments_container, galleryFragment);
+                                    fragmentTransaction.commit();
+                                    setTitle("Галлерея");
+                                }
                                 break;
                             case R.id.action_objects:
-                                hideFragments();
-                                fragmentManager.beginTransaction()
-                                        .show(OBJECTS_FRAGMENT)
-                                        .commit();
-                                setTitle("Объекты");
+                                fragment = (ObjectsFragment) fragmentManager.findFragmentById(R.id.objects_fragment);
+
+                                if (fragment == null)
+                                {
+                                    FragmentTransaction fragmentTransaction = fragmentManager
+                                            .beginTransaction();
+                                    fragmentTransaction.replace(R.id.fragments_container, objectsFragment);
+                                    fragmentTransaction.commit();
+                                    setTitle("Объекты");
+                                }
                                 break;
                             case R.id.action_account:
-                                hideFragments();
-                                fragmentManager.beginTransaction()
-                                        .show(ACCOUNT_FRAGMENT)
-                                        .commit();
-                                setTitle("Аккаунт");
+                                fragment = (AccountFragment) fragmentManager.findFragmentById(R.id.account_fragment);
+
+                                if (fragment == null)
+                                {
+                                    FragmentTransaction fragmentTransaction = fragmentManager
+                                            .beginTransaction();
+                                    fragmentTransaction.replace(R.id.fragments_container, accountFragment);
+                                    fragmentTransaction.commit();
+                                    setTitle("Аккаунт");
+                                }
                                 break;
                             default: return false;
                         }
-
                         updateNavigationBarState(item.getItemId());
                         return true;
                     }
                 });
+
+        fragmentManager = getSupportFragmentManager();
+        newsFragment = new NewsFragment();
+        accountFragment = new AccountFragment();
+        objectsFragment = new ObjectsFragment();
+        galleryFragment = new GalleryFragment();
+
+        // При первом запуске
+        if (savedInstanceState == null) {
+            // получаем экземпляр FragmentTransaction
+            android.support.v4.app.FragmentTransaction fragmentTransaction = fragmentManager
+                    .beginTransaction();
+
+            // добавляем фрагмент
+            NewsFragment newsFragment = new NewsFragment();
+            fragmentTransaction.add(R.id.fragments_container, newsFragment);
+            fragmentTransaction.commit();
+        }
     }
 
     @Override
@@ -177,15 +200,6 @@ public class MainActivity extends AppCompatActivity
             MenuItem item = menu.getItem(i);
             item.setChecked(item.getItemId() == actionId);
         }
-    }
-
-    private void hideFragments(){
-        fragmentManager.beginTransaction()
-                .hide(NEWS_FRAGMENT)
-                .hide(ACCOUNT_FRAGMENT)
-                .hide(GALLERY_FRAGMENT)
-                .hide(OBJECTS_FRAGMENT)
-                .commit();
     }
 }
 
