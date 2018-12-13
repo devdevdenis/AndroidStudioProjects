@@ -97,6 +97,15 @@ public class NewsFragment extends Fragment {
         evModel.setImg("news_tubing");
         evModel.setDefine("В эти выходные мы рады приветствовать на нашей горке для тюбинга! Подарите своему ребенку незабываемые выходные на горках Варяга! Ждем всех с 10 до 22.00 каждый день..");
         FlowManager.getModelAdapter(EventModel.class).save(evModel, dw);
+        }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+
+        final View view = inflater.inflate(R.layout.fragment_news, container, false);
+
+        DatabaseWrapper dw = FlowManager.getWritableDatabase(AppDatabase.class);
 
         // List
         List<EventModel> events = SQLite.select()
@@ -135,19 +144,16 @@ public class NewsFragment extends Fragment {
             ll.addView(twDefine);
             ll.addView(btnMore);
 
-            LinearLayout eventsContainer = (LinearLayout) getActivity().findViewById(R.id.eventsContainer);
+            LinearLayout eventsContainer = (LinearLayout) view.findViewById(R.id.eventsContainer);
             eventsContainer.addView(cw);
 
-            Log.i("MYLOGS",ev.getImg() + " : " + ev.getTitle() + " : " + ev.getDefine());
+            Log.i("MYLOGS", ev.getImg() + " : " + ev.getTitle() + " : " + ev.getDefine());
         }
+
+        // Inflate the layout for this fragment
+        return view;
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_news, container, false);
-    }
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
