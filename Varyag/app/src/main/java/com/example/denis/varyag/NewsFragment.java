@@ -1,12 +1,28 @@
 package com.example.denis.varyag;
 
 import android.content.Context;
+import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.widget.CardView;
+import android.text.Layout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.support.v4.app.Fragment;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
+import com.dbflow5.config.FlowManager;
+import com.dbflow5.database.DatabaseWrapper;
+import com.dbflow5.query.SQLite;
+
+import org.intellij.lang.annotations.Flow;
+
+import java.util.List;
 
 
 /**
@@ -24,7 +40,7 @@ public class NewsFragment extends Fragment {
     private static final String ARG_PARAM2 = "param2";
 
     // TODO: Rename and change types of parameters
-    private String mParam1;
+    private boolean updated = false;
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
@@ -54,9 +70,75 @@ public class NewsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+
+        //            Log.i("MYLOGS", FlowManager.INSTANCE.toString());
+        FlowManager.init(getActivity());
+
+        EventModel evModel = new EventModel();
+
+        evModel.setTitle("Вечерние тренировки в хоккейной школе Варяга");
+        evModel.setImg("news_hockey");
+        evModel.setDefine("Мы снова набираем вечернюю группу по тренировкам хоккею! Лучшие тренера Европы, 2 часа интенсивной работы, индивидуальный подход к каждому ученику. Принимаем желающих всех возрастов!");
+
+        //        evModel.save(true);
+        DatabaseWrapper dw = FlowManager.getWritableDatabase(AppDatabase.class);
+        FlowManager.getModelAdapter(EventModel.class).save(evModel, dw);
+
+        evModel = new EventModel();
+
+        evModel.setTitle("Открытие горнолыжных склонов!");
+        evModel.setImg("news_sklon");
+        evModel.setDefine("Друзья, завтра долгожданный для всех день! Открываем сезон на горнолыжных склонах и склонах для тюбинга! Горнолыжные работают 01.12 и 02.12 работают с 12.00 до 22.00. Каток завтра с 14.00 до 22.00. Ежедневный режим работы, цены и подробности по ссылке ..");
+        FlowManager.getModelAdapter(EventModel.class).save(evModel, dw);
+
+        evModel = new EventModel();
+
+        evModel.setTitle("Мы наконец-то засыпали горку для тюбинга!");
+        evModel.setImg("news_tubing");
+        evModel.setDefine("В эти выходные мы рады приветствовать на нашей горке для тюбинга! Подарите своему ребенку незабываемые выходные на горках Варяга! Ждем всех с 10 до 22.00 каждый день..");
+        FlowManager.getModelAdapter(EventModel.class).save(evModel, dw);
+
+        // List
+        List<EventModel> events = SQLite.select()
+                .from(EventModel.class)
+                .queryList(dw);
+
+        for (EventModel ev:events
+                ) {
+            CardView cw = new CardView(getActivity(), null, R.style.MyCardViewStyle);
+            LinearLayout ll = new LinearLayout(getActivity());
+            ll.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+            ll.setOrientation(LinearLayout.VERTICAL);
+
+            TextView twLabel = new TextView(getActivity(), null, R.style.EventLabel);
+            twLabel.setText(ev.getTitle());
+
+            TextView twDefine = new TextView(getActivity());
+            twDefine.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+            twDefine.setText(ev.getDefine());
+
+            Button btnMore = new Button(getActivity());
+            btnMore.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+            btnMore.setText(R.string.more);
+
+            // img from drawable resourse
+            ImageView img = new ImageView(getActivity());
+            img.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 200));
+            img.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            img.setImageResource(getResources().getIdentifier(ev.getImg(),
+                    "drawable", getActivity().getPackageName()));
+            img.setContentDescription(ev.getTitle());
+
+            cw.addView(ll);
+            ll.addView(twLabel);
+            ll.addView(img);
+            ll.addView(twDefine);
+            ll.addView(btnMore);
+
+            LinearLayout eventsContainer = (LinearLayout) getActivity().findViewById(R.id.eventsContainer);
+            eventsContainer.addView(cw);
+
+            Log.i("MYLOGS",ev.getImg() + " : " + ev.getTitle() + " : " + ev.getDefine());
         }
     }
 
