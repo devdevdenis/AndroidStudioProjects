@@ -62,11 +62,9 @@ public class detailedSensorInfo extends AppCompatActivity {
         if (sensor.getType() == Sensor.TYPE_GYROSCOPE || sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
             TextView tvTitle = findViewById(R.id.sensorDefineTextView);
             String sensorDefine = "Показатели ";
-            if (sensor.getType() == Sensor.TYPE_GYROSCOPE)
-            {
+            if (sensor.getType() == Sensor.TYPE_GYROSCOPE) {
                 sensorDefine += "гироскопа. Все значения приведены в радианах в секунду и измеряют скорость вращения вокруг локальной оси X, Y и Z устройства. Система координат такая же, как и для датчика ускорения. Вращение положительное в направлении против часовой стрелки. То есть наблюдатель, смотрящий из некоторого положительного положения на оси x, y или z на устройство, расположенное в исходной точке, сообщит о положительном вращении, если устройство будет вращаться против часовой стрелки.";
-            }else
-            {
+            } else {
                 sensorDefine += "датчика магнитного поля. Все значения приведены в микротеслах (мТл) и измеряют внешнее магнитное поле по осям X, Y и Z.";
             }
 
@@ -90,48 +88,50 @@ public class detailedSensorInfo extends AppCompatActivity {
 
             sensorManager.unregisterListener(mySensorEventListener);
             sensorManager.registerListener(mySensorEventListener, sensor, SensorManager.SENSOR_DELAY_NORMAL);
-        }
 
-        sb = (SeekBar) findViewById(R.id.seekBar);
-        sb.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                Log.i("MYLOGS", "Прогресс: " + progress);
-                sensorManager.unregisterListener(mySensorEventListener);
-                switch (progress){
-                    case 0:
-                    {
-                        sensorManager.registerListener(mySensorEventListener, detailedSensor, SensorManager.SENSOR_DELAY_NORMAL);
-                        break;
-                    }
-                    case 1:
-                    {
-                        sensorManager.registerListener(mySensorEventListener, detailedSensor, SensorManager.SENSOR_DELAY_UI);
-                        break;
-                    }
-                    case 2:
-                    {
-                        sensorManager.registerListener(mySensorEventListener, detailedSensor, SensorManager.SENSOR_DELAY_GAME);
-                        break;
-                    }
-                    case 3:
-                    {
-                        sensorManager.registerListener(mySensorEventListener, detailedSensor, SensorManager.SENSOR_DELAY_FASTEST);
-                        break;
+
+            sb = (SeekBar) findViewById(R.id.seekBar);
+            sb.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                    Log.i("MYLOGS", "Прогресс: " + progress);
+                    sensorManager.unregisterListener(mySensorEventListener);
+                    switch (progress) {
+                        case 0: {
+                            sensorManager.registerListener(mySensorEventListener, detailedSensor, SensorManager.SENSOR_DELAY_NORMAL);
+                            break;
+                        }
+                        case 1: {
+                            sensorManager.registerListener(mySensorEventListener, detailedSensor, SensorManager.SENSOR_DELAY_UI);
+                            break;
+                        }
+                        case 2: {
+                            sensorManager.registerListener(mySensorEventListener, detailedSensor, SensorManager.SENSOR_DELAY_GAME);
+                            break;
+                        }
+                        case 3: {
+                            sensorManager.registerListener(mySensorEventListener, detailedSensor, SensorManager.SENSOR_DELAY_FASTEST);
+                            break;
+                        }
                     }
                 }
-            }
 
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {
 
-            }
+                }
 
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
 
-            }
-        });
+                }
+            });
+        }
+        else
+        {
+            LinearLayout linlay = (LinearLayout) findViewById(R.id.controls);
+            linlay.setVisibility(View.INVISIBLE);
+        }
     }
 
     public void returnBack(View v)
