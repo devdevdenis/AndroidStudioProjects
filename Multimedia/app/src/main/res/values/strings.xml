@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Multimedia</string>
+    <string name="recordSongFromMic">Запись звука с микрофона:</string>
+    <string name="startRecord">Начать запись</string>
+    <string name="playRecord">Воспроизвести запись:</string>
+    <string name="play">Воспроизвести</string>
+    <string name="stopRecord">Остановить запись</string>
+</resources>
