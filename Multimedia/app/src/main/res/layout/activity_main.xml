@@ -21,12 +21,14 @@
             android:id="@+id/startRecord"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:onClick="startRecord"
             android:text="@string/startRecord" />
 
         <Button
             android:id="@+id/stopRecord"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:onClick="stopRecord"
             android:text="@string/stopRecord" />
 
         <TextView
@@ -36,9 +38,17 @@
             android:text="@string/playRecord" />
 
         <Button
-            android:id="@+id/playRecord"
+            android:id="@+id/readStart"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:onClick="readStart"
             android:text="@string/play" />
+
+        <Button
+            android:id="@+id/readStop"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="readStop"
+            android:text="@string/readStop" />
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>
