@@ -31,13 +31,6 @@ import static android.Manifest.permission.RECORD_AUDIO;
 
 public class MainActivity extends AppCompatActivity {
 
-    private boolean isRecording = false;
-    final String TAG = "MYLOGS";
-
-    int myBufferSize = 8192;
-    AudioRecord audioRecord;
-    boolean isReading = false;
-
     // Storage Permissions
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
     private static String[] PERMISSIONS_STORAGE = {
@@ -45,77 +38,77 @@ public class MainActivity extends AppCompatActivity {
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.RECORD_AUDIO,
     };
+    private boolean isRecording = false;
+    private int frequency = 11025;
+    int channelConfiguration = AudioFormat.CHANNEL_CONFIGURATION_MONO;
+    int audioEncoding = AudioFormat.ENCODING_PCM_16BIT;
+    DataOutputStream dos;
+    AudioRecord audioRecord;
+    int bufferSize;
+    short[] buffer;
+    private static String TAG = "MYLOGS";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         verifyStoragePermissions(this);
-        createAudioRecorder();
-        Log.d(TAG, "init state = " + audioRecord.getState());
-    }
-
-    void createAudioRecorder() {
-        int sampleRate = 8000;
-        int channelConfig = AudioFormat.CHANNEL_IN_MONO;
-        int audioFormat = AudioFormat.ENCODING_PCM_16BIT;
-
-        int minInternalBufferSize = AudioRecord.getMinBufferSize(sampleRate,
-                channelConfig, audioFormat);
-        int internalBufferSize = minInternalBufferSize * 4;
-        Log.d(TAG, "minInternalBufferSize = " + minInternalBufferSize
-                + ", internalBufferSize = " + internalBufferSize
-                + ", myBufferSize = " + myBufferSize);
-
-        audioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC,
-                sampleRate, channelConfig, audioFormat, internalBufferSize);
     }
 
     public void startRecord(View v) {
-        Log.d(TAG, "record start");
-        audioRecord.startRecording();
-//        readStart(v);
-        int recordingState = audioRecord.getRecordingState();
-        Log.d(TAG, "recordingState = " + recordingState);
+        File file = new File(Environment.getExternalStorageDirectory(), "raw.pcm/test");
+        // Создайте новый файл.
+        try {
+            file.createNewFile();
+        } catch (IOException e) {
+            Log.e(TAG, "Ошибка при создании файла для записи: " + e.getMessage());
+        }
+        try {
+            Log.i(TAG, "Запись начата..");
+            OutputStream os = new FileOutputStream(file);
+            BufferedOutputStream bos = new BufferedOutputStream(os);
+            dos = new DataOutputStream(bos);
+            bufferSize = AudioRecord.getMinBufferSize(frequency,
+                    channelConfiguration,
+                    audioEncoding);
+            buffer = new short[bufferSize];
+            // Создайте новый объект AudioRecord, чтобы записать звук.
+            audioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC,
+                    frequency,
+                    channelConfiguration,
+                    audioEncoding, bufferSize);
+            audioRecord.startRecording();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    if (audioRecord == null)
+                        return;
+
+                    try {
+                        while (isRecording) {
+                            int bufferReadResult = audioRecord.read(buffer, 0, bufferSize);
+                            for (int i = 0; i < bufferReadResult; i++)
+                                dos.writeShort(buffer[i]);
+                        }
+                        audioRecord.stop();
+                        dos.close();
+                    }catch (IOException e){
+                        Log.e(TAG, "Проблема при чтении сырого значения в буфер: " + e.getMessage());
+                    }
+                }
+            }).start();
+        } catch (Throwable t) {
+            Log.e(TAG, "Ошибка при чтении содержимого файла: " + t.getMessage());
+        }
     }
 
     public void stopRecord(View v) {
-        Log.d(TAG, "record stop");
-        audioRecord.stop();
+        Log.i(TAG, "Запись завершена");
+        isRecording = false;
     }
 
-    public void readStart(View v) {
-        Log.d(TAG, "read start");
-        isReading = true;
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                if (audioRecord == null)
-                    return;
-
-                byte[] myBuffer = new byte[myBufferSize];
-                int readCount = 0;
-                int totalCount = 0;
-                while (isReading) {
-                    readCount = audioRecord.read(myBuffer, 0, myBufferSize);
-                    totalCount += readCount;
-                    Log.d(TAG, "readCount = " + readCount + ", totalCount = "
-                            + totalCount);
-                }
-            }
-        }).start();
-    }
-
-    public void readStop(View v) {
-        Log.d(TAG, "read stop");
-        isReading = false;
-    }
-
-    void playRecord() {
-        int frequency = 8000;
-        int channelConfiguration = AudioFormat.CHANNEL_IN_MONO;
-        int audioEncoding = AudioFormat.ENCODING_PCM_16BIT;
-        File file = new File(Environment.getExternalStorageDirectory(), "raw.pcm");
+    public void playRecord(View v) {
+        File file = new File(Environment.getExternalStorageDirectory(), "raw.pcm/test");
         // Массив типа short для хранения аудиоданных (звук 16-битный,
         // поэтому выделяем по 2 байта на значение)
         int audioLength = (int) (file.length() / 2);
@@ -141,8 +134,8 @@ public class MainActivity extends AppCompatActivity {
             audioTrack.play();
             audioTrack.write(audio, 0, audioLength);
         } catch (Throwable t) {
+            Log.e(TAG, "Ошибка при воспроизведении файла: " + t.getMessage());
         }
-
     }
 
     public static void verifyStoragePermissions(Activity activity) {
@@ -163,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
 
-        isReading = false;
+        isRecording = false;
         if (audioRecord != null) {
             audioRecord.release();
         }

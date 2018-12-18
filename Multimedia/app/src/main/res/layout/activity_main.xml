@@ -41,14 +41,8 @@
             android:id="@+id/readStart"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="readStart"
+            android:onClick="playRecord"
             android:text="@string/play" />
 
-        <Button
-            android:id="@+id/readStop"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="readStop"
-            android:text="@string/readStop" />
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>
