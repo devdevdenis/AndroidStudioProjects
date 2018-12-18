@@ -17,4 +17,9 @@
         android:id="@+id/action_account"
         android:icon="@drawable/ic_bottom_nav_account"
         android:title="@string/Cabinet" />
+
+    <item
+        android:id="@+id/action_provider"
+        android:icon="@drawable/ic_menu_share"
+        android:title="@string/contentProvider" />
 </menu>

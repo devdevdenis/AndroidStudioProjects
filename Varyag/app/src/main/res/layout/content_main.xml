@@ -37,4 +37,11 @@
         android:layout_height="wrap_content"
         tools:layout="@layout/fragment_account" />
 
+    <fragment
+        android:id="@+id/provider_fragment"
+        android:name="com.example.denis.varyag.ProviderFragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:layout="@layout/fragment_provider" />
+
 </android.support.constraint.ConstraintLayout>

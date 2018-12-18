@@ -16,7 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, NewsFragment.OnFragmentInteractionListener, ObjectsFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener, NewsFragment.OnFragmentInteractionListener, ObjectsFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractionListener, ProviderFragment.OnFragmentInteractionListener {
 
     BottomNavigationView bottomNavigationView;
     android.support.v4.app.FragmentManager fragmentManager;
@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity
     NewsFragment newsFragment;
     ObjectsFragment objectsFragment;
     AccountFragment accountFragment;
+    ProviderFragment providerFragment;
 
     @Override
     public void onFragmentInteraction(Uri uri) {
@@ -67,10 +68,6 @@ public class MainActivity extends AppCompatActivity
                                             .beginTransaction();
                                     fragmentTransaction.replace(R.id.fragments_container, newsFragment);
                                     fragmentTransaction.commit();
-
-//                                    fragmentManager.findFragmentById(R.id.gallery_fragment);
-//                                    fragmentManager.findFragmentById(R.id.objects_fragment);
-//                                    fragmentManager.findFragmentById(R.id.account_fragment);
                                     setTitle("События");
                                 }
                                 break;
@@ -110,6 +107,18 @@ public class MainActivity extends AppCompatActivity
                                     setTitle("Аккаунт");
                                 }
                                 break;
+                            case R.id.action_provider:
+                                fragment = (ProviderFragment) fragmentManager.findFragmentById(R.id.provider_fragment);
+
+                                if (fragment == null)
+                                {
+                                    FragmentTransaction fragmentTransaction = fragmentManager
+                                            .beginTransaction();
+                                    fragmentTransaction.replace(R.id.fragments_container, providerFragment);
+                                    fragmentTransaction.commit();
+                                    setTitle("Контент-провайдер");
+                                }
+                                break;
                             default: return false;
                         }
                         updateNavigationBarState(item.getItemId());
@@ -122,6 +131,7 @@ public class MainActivity extends AppCompatActivity
         accountFragment = new AccountFragment();
         objectsFragment = new ObjectsFragment();
         galleryFragment = new GalleryFragment();
+        providerFragment = new ProviderFragment();
 
         // При первом запуске
         if (savedInstanceState == null) {
