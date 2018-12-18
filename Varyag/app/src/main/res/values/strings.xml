@@ -46,4 +46,13 @@
     <string name="second_name">Имя:</string>
     <string name="first_name">Фамилия:</string>
     <string name="contentProvider">ContentProvider</string>
+
+    <string name="insert">Добавить запись</string>
+    <string name="delete">Удалить выбранную запись</string>
+    <string name="eventLabel">Название события:</string>
+    <string name="eventLabelPlaceholder">Название</string>
+    <string name="eventDefine">Описание события:</string>
+    <string name="eventImg">Название картинки (без расширения):</string>
+    <string name="eventImgPlaceholder">фото</string>
+    <string name="rowId">ID записи:</string>
 </resources>

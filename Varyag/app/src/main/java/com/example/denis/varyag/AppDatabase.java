@@ -3,6 +3,7 @@ package com.example.denis.varyag;
 import android.net.Uri;
 
 import com.dbflow5.annotation.Database;
+import com.dbflow5.annotation.Table;
 import com.dbflow5.config.DBFlowDatabase;
 import com.dbflow5.contentprovider.annotation.ContentProvider;
 import com.dbflow5.contentprovider.annotation.ContentType;
@@ -17,9 +18,7 @@ import com.dbflow5.contentprovider.annotation.TableEndpoint;
 public abstract class AppDatabase extends DBFlowDatabase{
 
     public static final int VERSION = 1;
-
     public static final String AUTHORITY = "com.example.denis.varyag.provider";
-
     public static final String BASE_CONTENT_URI = "content://";
 
     private static Uri buildUri(String... paths) {
@@ -34,7 +33,7 @@ public abstract class AppDatabase extends DBFlowDatabase{
     @TableEndpoint(name = eventProviderModel.ENDPOINT, contentProvider = AppDatabase.class)
     public static class eventProviderModel {
 
-        public static final String ENDPOINT = "Event";
+        public static final String ENDPOINT = "EventModel";
 
         @ContentUri(path = eventProviderModel.ENDPOINT,
                 type = ContentType.VND_MULTIPLE + ENDPOINT)

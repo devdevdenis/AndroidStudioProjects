@@ -1,13 +1,23 @@
 package com.example.denis.varyag;
 
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.CursorLoader;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.net.URI;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -23,9 +33,13 @@ public class ProviderFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    final Uri EVENT_URI = Uri
+            .parse("content://com.example.denis.varyag.provider/EventModel");
+
+    final String EVENT_TITLE = "title";
+    final String EVENT_IMG = "img";
+    final String EVENT_DEFINE = "define";
+    public View currentView;
 
     private OnFragmentInteractionListener mListener;
 
@@ -54,16 +68,30 @@ public class ProviderFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_provider, container, false);
+
+        Button btnInsert = view.findViewById(R.id.btnInsert);
+        btnInsert.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addItem();
+            }
+        });
+
+        Button btnDelete = view.findViewById(R.id.btnDelete);
+        btnDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteItem();
+            }
+        });
+
+        currentView = view;
         return view;
     }
 
@@ -104,5 +132,44 @@ public class ProviderFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    public void addItem(){
+        ContentValues cv = new ContentValues();
+
+        EditText el = (EditText) currentView.findViewById(R.id.eventLabel);
+        EditText ed = (EditText) currentView.findViewById(R.id.eventDefine);
+        EditText ei = (EditText) currentView.findViewById(R.id.eventImg);
+
+        cv.put(EVENT_TITLE, el.getText().toString());
+        cv.put(EVENT_IMG, ei.getText().toString());
+        cv.put(EVENT_DEFINE, ed.getText().toString());
+        Uri newUri = currentView.getContext().getContentResolver().insert(EVENT_URI, cv);
+        Log.d("MYLOGS", "insert, result Uri : " + newUri.toString());
+    }
+
+    public void deleteItem(){
+        EditText rn = (EditText) currentView.findViewById(R.id.rowId);
+        if (!rn.getText().toString().equals(""))
+        {
+            Long rowId = Long.parseLong(rn.getText().toString());
+//            Uri uri = ContentUris.withAppendedId(EVENT_URI, rowId);
+            String[] args = {rowId.toString()};
+            int cnt = currentView.getContext().getContentResolver().delete(EVENT_URI, "id = ?", args);
+            Log.d("MYLOGS", "delete, count = " + cnt);
+
+            if (cnt == 0)
+            {
+                Toast.makeText(getActivity(), "Запись с указанным id не существует.", Toast.LENGTH_SHORT).show();
+            }
+            else
+            {
+                Toast.makeText(getActivity(), "Указанная запись успешно удалена.", Toast.LENGTH_SHORT).show();
+            }
+        }
+        else
+        {
+            Toast.makeText(getActivity(), "Укажите идентификатор записи!", Toast.LENGTH_SHORT).show();
+        }
     }
 }
