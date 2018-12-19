@@ -131,7 +131,8 @@ public class MainActivity extends AppCompatActivity {
         File file = new File(getFilesDir(), "myRecord");
         // Массив типа short для хранения аудиоданных (звук 16-битный,
         // поэтому выделяем по 2 байта на значение)
-        int audioLength = (int) (file.length() / 2);
+//        int audioLength = (int) (file.length() / 2);
+        int audioLength = (int) (file.length());
         short[] audio = new short[audioLength];
         try {
             InputStream is = new FileInputStream(file);
