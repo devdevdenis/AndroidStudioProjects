@@ -42,11 +42,6 @@ public class MainActivity extends AppCompatActivity {
             Manifest.permission.RECORD_AUDIO,
     };
 
-    // Timer
-    private Timer mTimer;
-    private TimerTask mMyTimerTask;
-    private int recordTime = 3000;
-
     private ProgressBar pb;
 
     // Record
@@ -73,22 +68,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void startRecord(View v) {
 
-//        //Timer task
-//        if (mTimer != null) {
-//            mTimer.cancel();
-//        }
-//
-//        mTimer = new Timer();
-//        mMyTimerTask = new TimerTask() {
-//            @Override
-//            public void run() {
-//                isRecording = false;
-//                Log.i(TAG, "Запись завершена.");
-//            }
-//        };
-//        // Timer task execute
-//        mTimer.schedule(mMyTimerTask, recordTime);
-
         File file = new File(getFilesDir(), "myRecord");
         // Создайте новый файл.Environment.getDataDirectory()
         try {
@@ -111,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
                     // Создайте новый объект AudioRecord, чтобы записать звук.
                     audioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC, frequency, channelConfiguration, audioEncoding, bufferSize);
                     audioRecord.startRecording();
-                    
+
                     try {
                         isRecording = true;
                         while (isRecording) {
