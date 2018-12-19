@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -26,6 +27,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static android.Manifest.permission.RECORD_AUDIO;
 
@@ -38,6 +41,13 @@ public class MainActivity extends AppCompatActivity {
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.RECORD_AUDIO,
     };
+
+    // Timer
+    private Timer mTimer;
+    private TimerTask mMyTimerTask;
+    private int recordTime = 3000;
+
+    // Record
     private boolean isRecording = false;
     private int frequency = 11025;
     int channelConfiguration = AudioFormat.CHANNEL_CONFIGURATION_MONO;
@@ -46,6 +56,8 @@ public class MainActivity extends AppCompatActivity {
     AudioRecord audioRecord;
     int bufferSize;
     short[] buffer;
+
+    // Logs
     private static String TAG = "MYLOGS";
 
     @Override
@@ -56,8 +68,25 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void startRecord(View v) {
-        File file = new File(Environment.getExternalStorageDirectory(), "raw.pcm/test");
-        // Создайте новый файл.
+
+        //Timer task
+        if (mTimer != null) {
+            mTimer.cancel();
+        }
+
+        mTimer = new Timer();
+        mMyTimerTask = new TimerTask() {
+            @Override
+            public void run() {
+                isRecording = false;
+                Log.i(TAG, "Запись завершена.");
+            }
+        };
+        // Timer task execute
+        mTimer.schedule(mMyTimerTask, recordTime);
+
+        File file = new File(getFilesDir(), "myRecord");
+        // Создайте новый файл.Environment.getDataDirectory()
         try {
             file.createNewFile();
         } catch (IOException e) {
@@ -68,47 +97,38 @@ public class MainActivity extends AppCompatActivity {
             OutputStream os = new FileOutputStream(file);
             BufferedOutputStream bos = new BufferedOutputStream(os);
             dos = new DataOutputStream(bos);
-            bufferSize = AudioRecord.getMinBufferSize(frequency,
-                    channelConfiguration,
-                    audioEncoding);
+            bufferSize = AudioRecord.getMinBufferSize(frequency, channelConfiguration, audioEncoding);
             buffer = new short[bufferSize];
             // Создайте новый объект AudioRecord, чтобы записать звук.
-            audioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC,
-                    frequency,
-                    channelConfiguration,
-                    audioEncoding, bufferSize);
+            audioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC, frequency, channelConfiguration, audioEncoding, bufferSize);
             audioRecord.startRecording();
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    if (audioRecord == null)
-                        return;
-
-                    try {
-                        while (isRecording) {
-                            int bufferReadResult = audioRecord.read(buffer, 0, bufferSize);
-                            for (int i = 0; i < bufferReadResult; i++)
-                                dos.writeShort(buffer[i]);
-                        }
-                        audioRecord.stop();
-                        dos.close();
-                    }catch (IOException e){
-                        Log.e(TAG, "Проблема при чтении сырого значения в буфер: " + e.getMessage());
-                    }
+            try {
+                isRecording = true;
+                while (isRecording) {
+                    int bufferReadResult = audioRecord.read(buffer, 0, bufferSize);
+                    for (int i = 0; i < bufferReadResult; i++)
+                        dos.writeShort(buffer[i]);
                 }
-            }).start();
+                audioRecord.stop();
+                dos.close();
+            }catch (IOException e){
+                Log.e(TAG, "Проблема при записи в файл myRecord: " + e.getMessage());
+            }
+
         } catch (Throwable t) {
-            Log.e(TAG, "Ошибка при чтении содержимого файла: " + t.getMessage());
+            Log.e(TAG, "Ошибка записи: " + t.getMessage());
         }
     }
 
+    // Not used
     public void stopRecord(View v) {
-        Log.i(TAG, "Запись завершена");
+        Log.i(TAG, "Запись завершена.");
         isRecording = false;
     }
 
     public void playRecord(View v) {
-        File file = new File(Environment.getExternalStorageDirectory(), "raw.pcm/test");
+        Log.i(TAG, "Воспроизведение..");
+        File file = new File(getFilesDir(), "myRecord");
         // Массив типа short для хранения аудиоданных (звук 16-битный,
         // поэтому выделяем по 2 байта на значение)
         int audioLength = (int) (file.length() / 2);
@@ -124,17 +144,13 @@ public class MainActivity extends AppCompatActivity {
             }
             // Закрытие входящих потоков.
             dis.close();
+
             // Создание объекта AudioTrack и проигрывание звука с его помощью
-            AudioTrack audioTrack = new AudioTrack(AudioManager.STREAM_MUSIC,
-                    frequency,
-                    channelConfiguration,
-                    audioEncoding,
-                    audioLength,
-                    AudioTrack.MODE_STREAM);
-            audioTrack.play();
+            AudioTrack audioTrack = new AudioTrack(AudioManager.STREAM_MUSIC, frequency, channelConfiguration, audioEncoding, audioLength, AudioTrack.MODE_STREAM);
             audioTrack.write(audio, 0, audioLength);
+            audioTrack.play();
         } catch (Throwable t) {
-            Log.e(TAG, "Ошибка при воспроизведении файла: " + t.getMessage());
+            Log.e(TAG, "Ошибка при воспроизведении файла myRecord: " + t.getMessage());
         }
     }
 
