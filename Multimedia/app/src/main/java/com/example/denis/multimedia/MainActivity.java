@@ -47,6 +47,8 @@ public class MainActivity extends AppCompatActivity {
     private TimerTask mMyTimerTask;
     private int recordTime = 3000;
 
+    private ProgressBar pb;
+
     // Record
     private boolean isRecording = false;
     private int frequency = 11025;
@@ -65,25 +67,27 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         verifyStoragePermissions(this);
+
+        pb = findViewById(R.id.progressBar2);
     }
 
     public void startRecord(View v) {
 
-        //Timer task
-        if (mTimer != null) {
-            mTimer.cancel();
-        }
-
-        mTimer = new Timer();
-        mMyTimerTask = new TimerTask() {
-            @Override
-            public void run() {
-                isRecording = false;
-                Log.i(TAG, "Запись завершена.");
-            }
-        };
-        // Timer task execute
-        mTimer.schedule(mMyTimerTask, recordTime);
+//        //Timer task
+//        if (mTimer != null) {
+//            mTimer.cancel();
+//        }
+//
+//        mTimer = new Timer();
+//        mMyTimerTask = new TimerTask() {
+//            @Override
+//            public void run() {
+//                isRecording = false;
+//                Log.i(TAG, "Запись завершена.");
+//            }
+//        };
+//        // Timer task execute
+//        mTimer.schedule(mMyTimerTask, recordTime);
 
         File file = new File(getFilesDir(), "myRecord");
         // Создайте новый файл.Environment.getDataDirectory()
@@ -94,26 +98,34 @@ public class MainActivity extends AppCompatActivity {
         }
         try {
             Log.i(TAG, "Запись начата..");
+            pb.setVisibility(View.VISIBLE);
             OutputStream os = new FileOutputStream(file);
             BufferedOutputStream bos = new BufferedOutputStream(os);
             dos = new DataOutputStream(bos);
             bufferSize = AudioRecord.getMinBufferSize(frequency, channelConfiguration, audioEncoding);
             buffer = new short[bufferSize];
-            // Создайте новый объект AudioRecord, чтобы записать звук.
-            audioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC, frequency, channelConfiguration, audioEncoding, bufferSize);
-            audioRecord.startRecording();
-            try {
-                isRecording = true;
-                while (isRecording) {
-                    int bufferReadResult = audioRecord.read(buffer, 0, bufferSize);
-                    for (int i = 0; i < bufferReadResult; i++)
-                        dos.writeShort(buffer[i]);
+
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    // Создайте новый объект AudioRecord, чтобы записать звук.
+                    audioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC, frequency, channelConfiguration, audioEncoding, bufferSize);
+                    audioRecord.startRecording();
+                    
+                    try {
+                        isRecording = true;
+                        while (isRecording) {
+                            int bufferReadResult = audioRecord.read(buffer, 0, bufferSize);
+                            for (int i = 0; i < bufferReadResult; i++)
+                                dos.writeShort(buffer[i]);
+                        }
+                        audioRecord.stop();
+                        dos.close();
+                    }catch (IOException e){
+                        Log.e(TAG, "Проблема при записи в файл myRecord: " + e.getMessage());
+                    }
                 }
-                audioRecord.stop();
-                dos.close();
-            }catch (IOException e){
-                Log.e(TAG, "Проблема при записи в файл myRecord: " + e.getMessage());
-            }
+            }).start();
 
         } catch (Throwable t) {
             Log.e(TAG, "Ошибка записи: " + t.getMessage());
@@ -123,6 +135,7 @@ public class MainActivity extends AppCompatActivity {
     // Not used
     public void stopRecord(View v) {
         Log.i(TAG, "Запись завершена.");
+        pb.setVisibility(View.INVISIBLE);
         isRecording = false;
     }
 
